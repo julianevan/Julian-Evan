@@ -16,6 +16,11 @@ def main():
     file = open("movies.csv",'r')
     file = file.readlines()
     FILM_LIST = FILM_LIST + file
+    for i in range(1, (len(FILM_LIST) + 1)):
+        content_split = FILM_LIST[i - 1].split(",")
+        FILM_LIST[i - 1] = content_split
+        FILM_LIST[i - 1][1] = int(FILM_LIST[i - 1][1])
+    FILM_LIST.sort(key=itemgetter(1))
     print(len(FILM_LIST), "movies loaded")
     while True:
         choice = str(input("Menu: \n"
@@ -24,11 +29,6 @@ def main():
           "W - Watch new movie \n"
           "Q - Quit"))
         if choice.upper() == "L":
-            for i in range(1,(len(FILM_LIST)+1)):
-                content_split = FILM_LIST[i-1].split(",")
-                FILM_LIST[i-1] = content_split
-                FILM_LIST[i-1][1] = int(FILM_LIST[i-1][1])
-            FILM_LIST.sort(key=itemgetter(1))
             for i in range(1,(len(FILM_LIST))+1):
                 if FILM_LIST[i-1][3] == "w":
                     print(i, "* {:<34}-{:>7}({})".format(FILM_LIST[i-1][0],FILM_LIST[i-1][1],FILM_LIST[i-1][2]))
@@ -44,7 +44,7 @@ def main():
                 genre = str(input("Category:"))
             except genre.isnumeric():
                 print("Invalid input, please enter a category of a movie")
-            new_film = ("(),(),(),u".format(title,year_released,genre))
+            new_film = ("{},{},{},u".format(title,year_released,genre))
             with open("movies.csv",'a') as file:
                 file.write(new_film)
             print(title,"(",genre, "from", year_released,") added to movie list")
@@ -61,8 +61,9 @@ def main():
                     if FILM_LIST[film_choice-1][3] == "w":
                         print("You have already watched the film")
                     else:
-                        FILM_LIST[film_choice-1][3] == "w"
-                        print(FILM_LIST[film_choice-1][1], "from", FILM_LIST[film_choice-1][2], "watched")
+                        FILM_LIST[film_choice-1][3] = "w"
+                        
+                        print(FILM_LIST[film_choice-1][0], "from", FILM_LIST[film_choice-1][1], "watched")
         elif choice.upper() == "Q":
             file = open("movies.csv",'r')
             file = file.readlines()
