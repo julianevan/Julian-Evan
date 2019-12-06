@@ -7,39 +7,50 @@ GitHub URL:
 from operator import itemgetter
 import csv
 def main():
-    number_detector = 0
     watched_counter = 0
-    film_counter = 0
+    watched_movies = 0
+    unwatched_movies = 0
     FILM_LIST= []
     """..."""
     print("Movies To Watch 1.0 - by Julian")
-    file = open("movies.csv",'r')
-    file = file.readlines()
-    FILM_LIST = FILM_LIST + file
+    file1 = open("movies.csv",'r')
+    file1 = file1.readlines()
+    FILM_LIST = FILM_LIST + file1
     for i in range(1, (len(FILM_LIST) + 1)):
         content_split = FILM_LIST[i - 1].split(",")
         FILM_LIST[i - 1] = content_split
         FILM_LIST[i - 1][1] = int(FILM_LIST[i - 1][1])
     FILM_LIST.sort(key=itemgetter(1))
+    for x in FILM_LIST:
+        if x[3] == "w\n":
+            x[3] = "w"
+        elif x[3] == "u\n":
+            x[3] = "u"
     print(len(FILM_LIST), "movies loaded")
     while True:
+        file1 = open("movies.csv", 'r')
         choice = str(input("Menu: \n"
           "L - List movies \n"
           "A - Add new movie \n"
           "W - Watch new movie \n"
           "Q - Quit"))
         if choice.upper() == "L":
-            for i in range(1,(len(FILM_LIST))+1):
-                if FILM_LIST[i-1][3] == "w":
-                    print(i, "* {:<34}-{:>7}({})".format(FILM_LIST[i-1][0],FILM_LIST[i-1][1],FILM_LIST[i-1][2]))
+            for i in range(1, (len(FILM_LIST))+1):
+                if FILM_LIST[i-1][3] == 'w':
+                    print(i, " {:<34}-{:>5}({})".format(FILM_LIST[i-1][0],FILM_LIST[i-1][1],FILM_LIST[i-1][2]))
+                    watched_movies += 1
                 else:
-                    print(i ,"  {:<34}-{:>7}({})".format(FILM_LIST[i-1][0],FILM_LIST[i-1][1],FILM_LIST[i-1][2]))
+                    print(i, "*{:<34}-{:>5}({})".format(FILM_LIST[i-1][0],FILM_LIST[i-1][1],FILM_LIST[i-1][2]))
+                    unwatched_movies += 1
+            print(watched_movies, "movies watched,", unwatched_movies, "movies still to watch")
+            watched_movies = 0
+            unwatched_movies = 0
         elif choice.upper() == "A":
             title = str(input("Title:"))
             try:
                 year_released = int(input("Year:"))
             except ValueError or year_released < 0:
-                print("Invalid input, please enter a number")
+                print("Invalid input, please enter a number which is positive")
             try:
                 genre = str(input("Category:"))
             except genre.isnumeric():
@@ -48,22 +59,34 @@ def main():
             with open("movies.csv",'a') as file:
                 file.write(new_film)
             print(title,"(",genre, "from", year_released,") added to movie list")
-
+            file.close()
         elif choice.upper() == "W":
             for num in range(1, len(FILM_LIST) + 1):
                 if FILM_LIST[num - 1][3] == "w":
-                    film_counter += 1
-            if film_counter == len(FILM_LIST):
+                    watched_counter += 1
+            if watched_counter == len(FILM_LIST):
                 print("All films watched!")
             else:
-                while True:
-                    film_choice = int(input("Please enter a number for a film to be watched"))
-                    if FILM_LIST[film_choice-1][3] == "w":
-                        print("You have already watched the film")
-                    else:
-                        FILM_LIST[film_choice-1][3] = "w"
-                        
-                        print(FILM_LIST[film_choice-1][0], "from", FILM_LIST[film_choice-1][1], "watched")
+                film_choice = int(input("Please enter a number for a film to be watched"))
+                if FILM_LIST[int(film_choice)-1][3] == "w":
+                    print("You have already watched the film")
+                else:
+                    FILM_LIST[int(film_choice)-1].insert(3,"w")
+                    file = open("movies.csv",'a+')
+                    for row in file:
+                        FILM_LIST.sort(key=itemgetter(1)),
+                        if FILM_LIST[film_choice-1]:
+                            file.remove(row[film_choice - 1])
+                            file_replacement = ("{},{},{}, w".format(FILM_LIST[film_choice-1][0],FILM_LIST[film_choice-1][1],FILM_LIST[film_choice-1][2]))
+                            with open("movies.csv",'w+') as file:
+                                file.write(file_replacement)
+                        else:
+                            file_line = file.readline()
+                            with open("movies.csv",'w+') as file:
+                                file.write(file_line)
+                    print(FILM_LIST[film_choice-1][0], "from", FILM_LIST[film_choice-1][1], "watched")
+                    watched_movies += 1
+                    unwatched_movies -= 1
         elif choice.upper() == "Q":
             file = open("movies.csv",'r')
             file = file.readlines()
@@ -71,16 +94,14 @@ def main():
             print(len(FILM_LIST),"movies saved to movies.csv")
             print("Have a nice day :)")
             quit()
+            file.close()
         else:
             choice = str(input("Menu: \n"
                       "L - List movies \n"
                       "A - Add new movie \n"
                       "W - Watch new movie \n"
                       "Q - Quit"))
+
 main()
-
-
-
-
 if __name__ == '__main__':
     main()
