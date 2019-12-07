@@ -126,19 +126,8 @@ def main():
             file4 = file4.readlines()
             FILM_LIST = []
             FILM_LIST = FILM_LIST + file4
-            file4 = open('movies.csv','w')
-            for i in range(1, (len(FILM_LIST) + 1)):
-                FILM_LIST = FILM_LIST[i - 1].split(",")
-                FILM_LIST[i - 1] = content_split
-            file4 = open("movies.csv", 'w+') #overwriting the file
-            with open("movies.csv", 'a+') as file4:
-                for i in range(1, (len(FILM_LIST)) + 1):
-                    lines = ("{},{},{},{}".format(FILM_LIST[i - 1][0], FILM_LIST[i - 1][1],
-                                                  FILM_LIST[i - 1][2], FILM_LIST[i - 1][3]))
-                    file4.write(lines)
             print(len(FILM_LIST), "movies saved to movies.csv")
             print("Have a nice day :)")
-            file4.close()
             quit()
         else:
             choice = str(input("Menu: \n"
